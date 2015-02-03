@@ -59,6 +59,9 @@ module Refile
     # @return [Integer]
     attr_accessor :content_max_age
 
+    #image width and height limit to ...
+    attr_accessor :limit_to
+
     # Where should the rack application be mounted? The default is 'attachments'.
     #
     # @return [String]

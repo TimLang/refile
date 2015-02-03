@@ -67,11 +67,11 @@ module Refile
       end
     end
 
-    def set(value)
+    def set(value, resize_to=nil)
       if value.is_a?(String)
         retrieve!(value)
       else
-        cache!(value)
+        cache!(value, resize_to)
       end
     end
 
@@ -81,14 +81,18 @@ module Refile
     rescue JSON::ParserError
     end
 
-    def cache!(uploadable)
+    def cache!(uploadable, resize_to=nil)
       @metadata = {
         size: uploadable.size,
         content_type: Refile.extract_content_type(uploadable),
         filename: Refile.extract_filename(uploadable)
       }
       if valid?
-        @metadata[:id] = cache.upload(uploadable).id
+        if resize_to
+          ip = Refile::ImageProcessor.new('fit')
+          img = ip.call(uploadable, *(resize_to.join('x')))
+        end
+        @metadata[:id] = cache.upload(img).id
         write_metadata
       elsif @raise_errors
         raise Refile::Invalid, @errors.join(", ")
