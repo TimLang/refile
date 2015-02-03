@@ -88,11 +88,15 @@ module Refile
         filename: Refile.extract_filename(uploadable)
       }
       if valid?
-        if resize_to
-          ip = Refile::ImageProcessor.new('fit')
-          img = ip.call(uploadable, *(resize_to.join('x')))
+        image_size_regex = /\A\d+x\d+$/ 
+        if (uploadable.content_type =~ /\Aimage\/\w+$/) && ( (resize_to =~ image_size_regex) || ((limit_to=Refile.limit_to) =~ image_size_regex) )
+          uploadable = if resize_to
+                         Refile::ImageProcessor.new('fit').call(uploadable, *(resize_to.join('x')))
+                       else
+                         Refile::ImageProcessor.new('limit').call(uploadable, *(limit_to.join('x')))
+                       end
         end
-        @metadata[:id] = cache.upload(img).id
+        @metadata[:id] = cache.upload(uploadable).id
         write_metadata
       elsif @raise_errors
         raise Refile::Invalid, @errors.join(", ")

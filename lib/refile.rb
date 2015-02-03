@@ -319,5 +319,6 @@ Refile.configure do |config|
   config.mount_point = "attachments"
   config.automount = true
   config.content_max_age = 60 * 60 * 24 * 365
+  config.limit_to = "900x900"
   config.types[:image] = Refile::Type.new(:image, content_type: %w[image/jpeg image/gif image/png])
 end
