@@ -91,9 +91,9 @@ module Refile
         image_size_regex = /\A\d+x\d+$/ 
         if (uploadable.content_type =~ /\Aimage\/\w+$/) && ( (resize_to =~ image_size_regex) || ((limit_to=Refile.limit_to) =~ image_size_regex) )
           uploadable = if resize_to
-                         Refile::ImageProcessor.new('fit').call(uploadable, *(resize_to.join('x')))
+                         Refile::ImageProcessor.new('fit').call(uploadable, *(resize_to.split('x')))
                        else
-                         Refile::ImageProcessor.new('limit').call(uploadable, *(limit_to.join('x')))
+                         Refile::ImageProcessor.new('limit').call(uploadable, *(limit_to.split('x')))
                        end
         end
         @metadata[:id] = cache.upload(uploadable).id
