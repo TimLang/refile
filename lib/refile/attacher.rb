@@ -89,7 +89,7 @@ module Refile
       }
       if valid?
         image_size_regex = /\A\d+x\d+$/ 
-        if (uploadable.content_type =~ /\Aimage\/\w+$/) && ( (resize_to =~ image_size_regex) || ((limit_to=Refile.limit_to) =~ image_size_regex) )
+        if (uploadable.respond_to?(:content_type) && uploadable.content_type =~ /\Aimage\/\w+$/) && ( (resize_to =~ image_size_regex) || ((limit_to=Refile.limit_to) =~ image_size_regex) )
           uploadable = if resize_to
                          Refile::ImageProcessor.new('fit').call(uploadable, *(resize_to.split('x')))
                        else
